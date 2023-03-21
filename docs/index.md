@@ -42,28 +42,132 @@ stable-diffusion服务需要对ECS、VPC等资源进行访问和创建操作，�
 ### 部署参数说明
 您在创建服务实例的过程中，需要配置服务实例信息。下文介绍stable-diffusion服务实例输入参数的详细信息。
 
-| 参数组     | 参数项    | 示例           | 说明                       |
-|---------|--------|--------------| --- |
-| 服务实例名称  |        | test         | 实例的名称                    |
-| 地域      |        | 华东1（杭州）      | 选中服务实例的地域，建议就近选中，以获取更好的网络延时。 |
-| 可用区配置   | 部署区域   | 可用区I         | 地域下的不同可用区域               |
+| 参数组     | 参数项    | 示例           | 说明                                                                        |
+|---------|--------|--------------|---------------------------------------------------------------------------|
+| 服务实例名称  |        | test         | 实例的名称                                                                     |
+| 地域      |        | 华东1（杭州）      | 选中服务实例的地域，建议就近选中，以获取更好的网络延时。                                              |
+| 可用区配置   | 部署区域   | 可用区I         | 地域下的不同可用区域                                                                |
 | 付费类型配置  | 付费类型   | 按量付费 或 包年包月  |
-| ECS实例配置 | 实例类型   | ecs.gn6i-c4g1.xlarge | 实例规格，可以根据实际需求选择          |
+| ECS实例配置 | 实例类型   | ecs.gn6i-c4g1.xlarge | 实例规格，可以根据实际需求选择                                                           |
 | ECS实例配置 | 实例密码   | ********     | 设置实例密码。长度8~30个字符，必须包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+={}[]:;'<>,.?/ 中的特殊符号） |
-| 网络配置    | 专有网络IPv4网段  | 192.168.0.0/16     | VPC的ip地址段范围 |
-| 网络配置    | 交换机子网网段   | 192.168.0.0/24     | 交换机子网网段 |
+| 网络配置    | 专有网络IPv4网段  | 192.168.0.0/16     | VPC的ip地址段范围                                                               |
+| 网络配置    | 交换机子网网段   | 192.168.0.0/24     | 交换机子网网段                                                                   |
+| 登陆信息    | 软件登录名    | admin           | 软件登陆名称                                                                    |
+| 登陆信息    | 软件登陆密码   | ********        | 设置实例密码。长度8~30个字符，必须包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+={}[]:;'<>,.?/ 中的特殊符号） |
+| RDS插件配置 | 开启RDS插件  | false           | 是否开启RDS插件，默认不开启，如有需求请设置为true，以下参数需要开启配置后进行设置                              |
+| RDS插件配置    | 实例规格     | mysql.n2.medium.1       | RDS实例规格                                                                   |
+| RDS插件配置    | 实例存储     | 200           | RDS实例大小范围为20-2000，每5个增量，单位为GB                                             |
+| RDS插件配置    | 数据库账号名称    | rdsuser                | 数据库实例的主账号名称                                                               |
+| RDS插件配置    | 实例密码     | ********        | 设置实例密码。长度8~30个字符，必须包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+={}[]:;'<>,.?/ 中的特殊符号） |
 
 ![1.jpg](1.jpg)
+
+ - RDS插件配置说明（需要存储数据时请打开此配置项进行配置）
+<img src="6.jpg" width="1100" height="800" align="bottom"/>
 
 ### 验证结果
 
 1. 查看服务实例。
 服务实例创建成功后，部署时间大约需要2分钟。部署完成后，页面上可以看到对应的服务实例。
-![2.jpg](2.jpg)
-
+<img src="2.jpg" width="1500" height="600" align="bottom"/>
 2. 通过服务实例访问stable-diffusion
-![3.jpg](3.jpg)
-进入到对应的服务实例后，可以在页面上获取到Endpoint以访问服务。
+<img src="3.jpg" width="1500" height="600" align="bottom"/>
+3. 进入到对应的服务实例后，点击Endpoint后面的链接,输入第1步设置的软件登录名及密码。
+<img src="4.png" width="600" height="600" align="bottom"/>
+4. 完成验证后即可访问：
+<img src="5.png" width="1500" height="800" align="bottom"/>
+
+### 下载模型
+1. 以某模型网站提供的模型为例，首先此模型网站，找到自己想要下载的模型（预览图左上角显示模型的类型）
+<img src="img.png" width="1500" height="800" align="bottom"/>
+2. 点击一个模型预览图进入详情页，找到Download按钮点击右键，复制链接地址：
+<img src="img_1.png" width="1500" height="600" align="bottom"/>
+3. 在计算巢控制台点击运维管理，点击“下载模型”，输入相关参数（选择模型或预览图、模型类型、下载方式、文件类型，输入模型名称）：
+![img.jpg](img_2.png)
+4. 在计算巢控制台点击运维管理，点击“下载模型”，输入相关参数（选择模型或预览图、模型类型、下载方式、文件类型，输入模型名称）：
+    - CHECKPOINT模型示例:
+    ![img.jpg](img_4.png)
+    - Lora模型示例:
+    ![img.jpg](img_5.png)
+    - 注意：CHECKPOINT、LORA、VAE三种方式不需要输入存储目录，其他模型可在模型类型选择“OTHER”, 自行修改文件存储目录:
+    ![img.jpg](img_3.png)
+5. 参数输入完成后，点击下一步,点击创建，开始下载
+![img.jpg](img_6.png)
+6. 等待下载完成（等待过程中也可以继续下载其他模型），当执行状态变为成功，表示已经下载完成
+![img.jpg](img_7.png)
+7. 此时可以登录到WebUI加载下载的模型
+    - CHECKPOINT模型示例，点击上面的刷新按钮，就可以看到我们刚刚下载的CHECKPOINT模型
+    <img src="img_8.png" width="1500" height="700" align="bottom"/>
+    - Lora模型示例，点击右面Lora按钮，然后点击Refresh，此时就可以看到我们刚刚下载的Lora模型
+    <img src="img_9.png" width="1500" height="700" align="bottom"/>
+8. 在这里我们可以看到，直接下载模型的没有预览图的，此时可以通过上述下载方式自行上传一张图片到模型文件中，这里以上传本地文件的Lora模型预览图为例。
+![img.jpg](img_10.png)
+9. 以此点击确定、创建，等待执行状态变为成功。再次点击Refresh,可以看到，预览图也已经加载出来啦！
+<img src="img_11.png" width="1500" height="800" align="bottom"/>
+
+### 节约成本
+GPU资源费用较高，使用完毕后可以通过下述两种方式来节省成本：
+1.若只是暂时不使用了可以在运维管理页面选择关机（节省停机模式）【确保前面快速启动步骤1中选择的是按量付费类型】，此时部分资源会被回收并停止收费，以降低相关费用、节约使用成本，下次使用再进行开机，操作如下：
+
+- 关机：
+<img src="img_12.png" width="1300" height="400" align="bottom"/>
+- 等待关机结束：
+<img src="img_18.png" width="1300" height="300" align="bottom"/>
+- 开机：
+<img src="img_14.png" width="1300" height="300" align="bottom"/>
+- 等待开机结束：
+<img src="img_13.png" width="1300" height="300" align="bottom"/>
+2.若彻底不再使用了可以直接将服务实例删除，后续就不会再产生费用
+<img src="img_15.png" width="1300" height="300" align="bottom"/>
+
+
+# 高级功能
+### API访问
+通过计算巢创建的Stable Diffusion默认开启了API访问，您可以通过API调用来更好地集成我们的服务。
+通过上述步骤4中获取的Endpoint+/docs# 可以看到所有可访问的API列表，如访问 http://48.xxx.xx.163:8080/docs# 可以看到
+<img src="img_17.png" width="1500" height="800" align="bottom"/>
+以下是一个通过Python调用Stable Diffusion API的示例：
+```
+import requests
+import io
+import base64
+from PIL import Image, PngImagePlugin
+
+if __name__ == '__main__':
+    url = "http://48.xxx.xx.163:8080"
+    payload = {
+        "prompt": "puppy dog",
+        "steps": 5
+    }
+    token = "admin:password"
+    encoded_token = base64.b64encode(token.encode("utf-8")).decode("utf-8")
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Basic {encoded_token}'
+    }
+    response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload, headers=headers)
+    r = response.json()
+    for i in r['images']:
+        image = Image.open(io.BytesIO(base64.b64decode(i.split(",", 1)[0])))
+        png_payload = {
+            "image": "data:image/png;base64," + i
+        }
+        response2 = requests.post(url=f'{url}/sdapi/v1/png-info', json=png_payload)
+        pnginfo = PngImagePlugin.PngInfo()
+        pnginfo.add_text("parameters", response2.json().get("info"))
+        image.save('output.png', pnginfo=pnginfo)
+
+```
+更多API访问信息可查看[API访问向导](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API#api-guide-by-kilvoctu)了解
+
+## 通过RDS保存生成配置
+1. 在 Script 中选择 RDS-Storage
+2. 勾选 Save to DB（勾选即代表需要将生成结果存储到RDS中）
+3. 指定数据库名 Database Name（默认值 stable_diffusion），指定表名 Table Name（默认 generated_images）
+4. 点击 Generate，图片生成完毕后，结果自动存储至 RDS
+<img src="img_16.png" width="1500" height="800" align="bottom"/>
+
+
 
 ### 帮助文档
 请访问[stable-diffusion使用文档](https://github.com/wangwangbobo/stable-diffusion-webui)了解如何使用。
