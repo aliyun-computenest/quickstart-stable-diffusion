@@ -114,7 +114,8 @@ stable-diffusion服务需要对ECS、VPC等资源进行访问和创建操作，�
 <img src="9.jpg" width="1500" height="600" align="bottom"/>
 
 
-### 节约成本
+## 节约成本
+### ECS节约成本
 GPU资源费用较高，使用完毕后可以通过下述两种方式来节省成本：
 1.若只是暂时不使用了可以在运维管理页面选择关机（节省停机模式）【确保前面快速启动步骤1中选择的是按量付费类型】，此时部分资源会被回收并停止收费，以降低相关费用、节约使用成本，下次使用再进行开机，操作如下：
 
@@ -129,8 +130,17 @@ GPU资源费用较高，使用完毕后可以通过下述两种方式来节省�
 2.若彻底不再使用了可以直接将服务实例删除，后续就不会再产生费用
 <img src="img_15.png" width="1300" height="300" align="bottom"/>
 
+### RDS节约成本
+参加运营活动，2核4G基础版新用户首购只要8.8元/月
 
-# 高级功能
+<img src="img_19.png" width="400" height="600" align="lift"/>
+
+1. 参与基本规则：活动期间，用户可以通过活动页面享受活动优惠，具体优惠信息以活动页面为准，原则上5折以下特价商品，不再与其他活动或优惠叠加。
+2. 产品新用户专享规则：折扣适用于未购买过此商品的用户，新用户折扣不与其他活动或优惠叠加使用，折扣同一用户限首次首件，退订后将不支持再次参加活动；
+3. 除特殊情况外，用户参加本活动购买的产品/提货券，不支持退订。如因特殊原因发生退订的，退订前需交回通过本活动所享受的相关权益，例如：补足差价、交回奖品等；
+
+
+## 高级功能
 ### API访问
 通过计算巢创建的Stable Diffusion默认开启了API访问，您可以通过API调用来更好地集成我们的服务。
 通过上述步骤4中获取的Endpoint+/docs# 可以看到所有可访问的API列表，如访问 http://48.xxx.xx.163:8080/docs# 可以看到
@@ -170,13 +180,42 @@ if __name__ == '__main__':
 更多API访问信息可查看[API访问向导](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API#api-guide-by-kilvoctu)了解
 
 ## 通过RDS保存生成配置
-1. 在 Script 中选择 RDS-Storage
-2. 勾选 Save to DB（勾选即代表需要将生成结果存储到RDS中）
-3. 指定数据库名 Database Name（默认值 stable_diffusion），指定表名 Table Name（默认 generated_images）
-4. 点击 Generate，图片生成完毕后，结果自动存储至 RDS
-<img src="img_16.png" width="1500" height="800" align="bottom"/>
+1. 勾选 Save to DB（勾选即代表需要将生成结果存储到RDS中）
+2. 点击 Generate，图片生成完毕后，结果自动存储至 RDS
+<img src="img_16.png" width="1000" height="600" align="bottom"/>
 
+现在这些关键数据已经保存到RDS了，接下来我们看一下如何查询刚刚保存的数据，一共有两种方式：
+1. 通过服务界面查询数据。启用RDS插件之后，会有一个额外的Images页面，其中会显示已经保存到RDS的图片以及相应参数。点击Refresh刷新列表，点击Download将图片下载到本地
+<img src="img_20.png" width="1000" height="500" align="bottom"/>
+2. 还可以直接连接到RDS数据库查询数据。连接方式如下:
+SD"服务资源"中点击RDS
+<img src="img_21.png" width="1000" height="400" align="bottom"/>
+筛选出RDS实例，点击实例ID跳转到RDS详情页：
+<img src="img_22.png" width="1000" height="80" align="bottom"/>
+点击"登录数据库", 输入之前创建时RDS MySQL的登陆名和密码：
+<img src="img_23.png" width="1000" height="400" align="bottom"/>
+<img src="img_24.png" width="1000" height="650" align="bottom"/>
+找到存放在RDS里的AIGC默认的库表： stable_diffusion.generated_images。
 
+我们使用SD产生的数据都在这里啦，保存prompt是非常实用的功能，写的一大串prompt都存储在RDS里可拿出来复用，同时即使GPU服务器资源释放了，所有AIGC的相关数据都不会丢失，数据才是核心资产嘛。
+另外熟悉的SQL的小伙伴们可以SELECT一波统计分析下，还可利用阿里云ETL服务将RDS数据抽取到大数据里分析，实现数据永远在线，数据价值不断放大。
+此外，再附上generated_images 表各个字段的注释（数据库：stable_diffusion数据表：generated_images ）
+```
+CREATE TABLE `generated_images` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,     /*id*/
+  `prompt` text,													 /*图片生成的 prompt */
+  `negative_prompt` text,									 /*图片生成的 negative_prompt */
+  `steps` varchar(255) DEFAULT NULL,       /*图片生成的 steps */
+  `seed` varchar(255) DEFAULT NULL,        /*图片生成的 seed */
+  `sampler` varchar(255) DEFAULT NULL,     /*图片生成的 sampler */
+  `cfg_scale` varchar(255) DEFAULT NULL,   /*图片生成的 cfg_scale */
+  `size` varchar(255) DEFAULT NULL,        /*图片生成的 size，例如 512x512 */
+  `model_hash` varchar(255) DEFAULT NULL,  /*图片生成的 model 的 hash 值 */
+  `model` varchar(255) DEFAULT NULL,       /*图片生成的 model */
+  `image_base64` mediumtext,               /*图片数据，base64格式 */
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+```
 
 ### 帮助文档
 请访问[stable-diffusion使用文档](https://github.com/wangwangbobo/stable-diffusion-webui)了解如何使用。
