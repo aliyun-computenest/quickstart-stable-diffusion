@@ -182,19 +182,19 @@ if __name__ == '__main__':
 ## 通过RDS保存生成配置
 1. 勾选 Save to DB（勾选即代表需要将生成结果存储到RDS中）
 2. 点击 Generate，图片生成完毕后，结果自动存储至 RDS
-<img src="img_16.png" width="1000" height="600" align="bottom"/>
+<img src="img_16.png" width="1300" height="600" align="bottom"/>
 
 现在这些关键数据已经保存到RDS了，接下来我们看一下如何查询刚刚保存的数据，一共有两种方式：
 1. 通过服务界面查询数据。启用RDS插件之后，会有一个额外的Images页面，其中会显示已经保存到RDS的图片以及相应参数。点击Refresh刷新列表，点击Download将图片下载到本地
-<img src="img_20.png" width="1000" height="500" align="bottom"/>
+<img src="img_20.png" width="1500" height="500" align="bottom"/>
 2. 还可以直接连接到RDS数据库查询数据。连接方式如下:
 SD"服务资源"中点击RDS
-<img src="img_21.png" width="1000" height="400" align="bottom"/>
+<img src="img_21.png" width="1500" height="400" align="bottom"/>
 筛选出RDS实例，点击实例ID跳转到RDS详情页：
-<img src="img_22.png" width="1000" height="80" align="bottom"/>
+<img src="img_22.png" width="1500" height="80" align="bottom"/>
 点击"登录数据库", 输入之前创建时RDS MySQL的登陆名和密码：
-<img src="img_23.png" width="1000" height="400" align="bottom"/>
-<img src="img_24.png" width="1000" height="650" align="bottom"/>
+<img src="img_23.png" width="1500" height="400" align="bottom"/>
+<img src="img_24.png" width="1500" height="650" align="bottom"/>
 找到存放在RDS里的AIGC默认的库表： stable_diffusion.generated_images。
 
 我们使用SD产生的数据都在这里啦，保存prompt是非常实用的功能，写的一大串prompt都存储在RDS里可拿出来复用，同时即使GPU服务器资源释放了，所有AIGC的相关数据都不会丢失，数据才是核心资产嘛。
