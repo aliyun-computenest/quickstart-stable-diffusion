@@ -141,6 +141,44 @@ GPU资源费用较高，使用完毕后可以通过下述两种方式来节省�
 
 
 ## 高级功能
+### 集群版
+#### 背景
+
+针对于多人共同使用出图的场景下，stable diffusion webui会排队出图的问题，计算巢推出了集群版stable diffusion快速部署的功能。
+
+#### 适用场景：
+
+- 固定配置场景下的多人webui出图多场景，目的在于多机提速
+- API调用集成的场景
+
+#### 主要功能：
+
+- 支持一键部署
+- 支持弹性扩缩容
+- 支持多机负载均衡调用
+- 支持下载模型、下载插件等常用运维功能
+
+#### 架构说明：
+
+- 基于NAS做ECS间的共享存储，用于存放webui的配置、模型、插件功能
+- 基于SLB负载均衡做多机流量的转发，对于多用户使用的场景，开启slb会话保持功能，对于api调用的场景下关闭会话保持
+- 基于ESS弹性伸缩做ecs的动态扩缩容功能，默认需要手动扩缩容，如果有需要可以配置按cpu/gpu负载的动态扩缩容
+- NAT网关做集群的外网流量访问出口
+<img src="img_25.png" width="1000" height="800" align="bottom"/>
+
+#### 部署集群：
+
+- 登录阿里云计算巢控制台，进入Stable Diffusion服务创建界面，根据界面提示，模版选择gpu集群版，填写相关参数后点击确认订单。
+<img src="img_26.png" width="1500" height="1000" align="bottom"/>
+
+#### 扩容集群
+
+- 部署完成后点击详情进入服务实例详情页，在运维管理中，点击截图所示位置可以选择弹性扩缩容功能。
+<img src="img_28.png" width="1500" height="500" align="bottom"/>
+- 输入实例扩容数后点击确定即可完成机器扩容，还可以到对应的伸缩组中，按监控负载完成自动的弹性扩缩容
+<img src="img_27.png" width="1500" height="1000" align="bottom"/>
+
+
 ### API访问
 通过计算巢创建的Stable Diffusion默认开启了API访问，您可以通过API调用来更好地集成我们的服务。
 通过上述步骤4中获取的Endpoint+/docs# 可以看到所有可访问的API列表，如访问 http://48.xxx.xx.163:8080/docs# 可以看到
@@ -179,7 +217,7 @@ if __name__ == '__main__':
 ```
 更多API访问信息可查看[API访问向导](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API#api-guide-by-kilvoctu)了解
 
-## 通过RDS保存生成配置
+### 通过RDS保存生成配置
 1. 勾选 Save to DB（勾选即代表需要将生成结果存储到RDS中）
 2. 点击 Generate，图片生成完毕后，结果自动存储至 RDS
 <img src="img_16.png" width="1300" height="600" align="bottom"/>
@@ -217,5 +255,5 @@ CREATE TABLE `generated_images` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 ```
 
-### 帮助文档
+## 帮助文档
 请访问[stable-diffusion使用文档](https://github.com/wangwangbobo/stable-diffusion-webui)了解如何使用。
